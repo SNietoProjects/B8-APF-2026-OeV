@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Tema 8 Específico — Orden 19/2013, Seguridad Digital GVA | Opositar en Valencia</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --naranja: #d97706; --naranja-claro: #fef3c7; --naranja-borde: #f59e0b;
+    --azul-oscuro: #1e293b; --texto: #374151; --texto-suave: #6b7280;
+    --borde: #e5e7eb; --fondo: #fafaf9; --blanco: #ffffff;
+    --verde: #166534; --verde-bg: #f0fdf4; --verde-borde: #86efac;
+    --rojo: #991b1b; --rojo-bg: #fef2f2; --rojo-borde: #fca5a5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: var(--fondo); color: var(--texto); min-height: 100vh; font-size: 16px; line-height: 1.6; }
+  header { background: var(--blanco); border-bottom: 1px solid var(--borde); }
+  .header-top { max-width: 860px; margin: 0 auto; padding: 1.4rem 1.5rem 1rem; display: flex; align-items: flex-start; gap: 1.2rem; }
+  .header-logo { width: 48px; height: 48px; border-radius: 8px; object-fit: contain; flex-shrink: 0; }
+  .header-textos { flex: 1; }
+  .header-site { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--naranja); font-weight: 600; margin-bottom: 3px; }
+  .header-titulo { font-family: 'Lora', serif; font-size: clamp(1.2rem, 3.5vw, 1.7rem); font-weight: 700; color: var(--azul-oscuro); line-height: 1.2; }
+  .header-sub { font-size: 0.88rem; color: var(--texto-suave); margin-top: 4px; }
+  .header-meta { background: var(--naranja-claro); border-top: 1px solid #fde68a; padding: 0.55rem 1.5rem; }
+  .header-meta-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; font-size: 0.83rem; color: #92400e; font-weight: 500; }
+  .barra-wrap { position: sticky; top: 0; z-index: 100; background: var(--blanco); border-bottom: 1px solid var(--borde); padding: 0.6rem 1.5rem; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+  .barra-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; }
+  .barra-track { flex: 1; height: 6px; background: #f3f4f6; border-radius: 99px; overflow: hidden; }
+  .barra-fill { height: 100%; background: var(--naranja); border-radius: 99px; transition: width 0.35s ease; width: 0%; }
+  .barra-num { font-size: 13px; font-weight: 600; color: var(--azul-oscuro); white-space: nowrap; min-width: 52px; }
+  .barra-score { font-size: 13px; color: var(--texto-suave); white-space: nowrap; }
+  .barra-score .ok { color: var(--verde); font-weight: 600; }
+  .barra-score .ko { color: var(--rojo); font-weight: 600; }
+  main { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+  .card { background: var(--blanco); border: 1px solid var(--borde); border-radius: 10px; padding: 1.5rem 1.6rem; margin-bottom: 1.4rem; transition: box-shadow 0.2s; }
+  .card:hover { box-shadow: 0 3px 14px rgba(0,0,0,0.06); }
+  .card-num { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--naranja); margin-bottom: 0.5rem; }
+  .card-pregunta { font-family: 'Lora', serif; font-size: 1rem; font-weight: 600; line-height: 1.55; color: var(--azul-oscuro); margin-bottom: 1.1rem; }
+  .opciones { display: flex; flex-direction: column; gap: 0.45rem; }
+  .opcion { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.7rem 1rem; border: 1.5px solid var(--borde); border-radius: 7px; cursor: pointer; background: var(--blanco); text-align: left; font-family: 'Source Sans 3', sans-serif; font-size: 0.93rem; color: var(--texto); line-height: 1.5; transition: border-color 0.15s, background 0.15s; width: 100%; }
+  .opcion:hover:not(:disabled) { border-color: var(--naranja-borde); background: var(--naranja-claro); }
+  .opcion .letra { font-weight: 700; color: var(--naranja); min-width: 18px; font-size: 0.85rem; margin-top: 2px; flex-shrink: 0; }
+  .opcion.correcta { border-color: var(--verde-borde); background: var(--verde-bg); color: var(--verde); }
+  .opcion.correcta .letra { color: #15803d; }
+  .opcion.incorrecta { border-color: var(--rojo-borde); background: var(--rojo-bg); color: var(--rojo); }
+  .opcion.incorrecta .letra { color: var(--rojo); }
+  .opcion:disabled { cursor: default; }
+  .explicacion { display: none; margin-top: 1rem; padding: 0.9rem 1rem 0.9rem 1.1rem; background: #fffbeb; border-left: 3px solid var(--naranja); border-radius: 0 6px 6px 0; font-size: 0.875rem; line-height: 1.65; color: var(--texto); }
+  .explicacion.visible { display: block; animation: fadeIn 0.22s ease; }
+  .explicacion strong { color: var(--azul-oscuro); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+  .resultado { display: none; background: var(--blanco); border: 1px solid var(--borde); border-radius: 12px; padding: 2.5rem 2rem 2rem; margin: 1.5rem 0 2rem; text-align: center; }
+  .resultado.visible { display: block; animation: fadeIn 0.3s ease; }
+  .resultado-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--naranja); font-weight: 600; margin-bottom: 0.5rem; }
+  .resultado h2 { font-family: 'Lora', serif; font-size: 1.75rem; font-weight: 700; color: var(--azul-oscuro); margin-bottom: 0.3rem; }
+  .resultado-nota { font-size: 3.2rem; font-weight: 700; color: var(--azul-oscuro); line-height: 1; margin: 1rem 0 0.3rem; font-family: 'Lora', serif; }
+  .resultado-nota span { color: var(--naranja); }
+  .calif-badge { display: inline-block; padding: 5px 16px; border-radius: 99px; font-size: 0.9rem; font-weight: 600; margin: 0.6rem 0 1.5rem; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 0 0 1.5rem; }
+  .stat { background: var(--fondo); border: 1px solid var(--borde); border-radius: 8px; padding: 0.9rem 0.5rem; }
+  .stat-num { font-size: 1.9rem; font-weight: 700; font-family: 'Lora', serif; }
+  .stat-lab { font-size: 0.78rem; color: var(--texto-suave); margin-top: 2px; }
+  .resultado-hint { font-size: 0.85rem; color: var(--texto-suave); margin-bottom: 1.2rem; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 0.7rem 1.6rem; border-radius: 7px; font-family: 'Source Sans 3', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.18s; }
+  .btn-naranja { background: var(--naranja); color: white; }
+  .btn-naranja:hover { background: #b45309; transform: translateY(-1px); }
+  .divider { text-align: center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--texto-suave); margin: 2rem 0 1.5rem; display: flex; align-items: center; gap: 1rem; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--borde); }
+  @media (max-width: 580px) { main { padding: 1.2rem 1rem 4rem; } .card { padding: 1.1rem; } .stats { grid-template-columns: 1fr 1fr; } .header-top { padding: 1rem; gap: 0.8rem; } .header-meta { padding: 0.5rem 1rem; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <img class="header-logo"
+      src="https://opositorgva.wordpress.com/wp-content/uploads/2024/04/cropped-opositar-en-valencia-logo-sin-fondo.png"
+      alt="Opositar en Valencia" onerror="this.style.display='none'">
+    <div class="header-textos">
+      <div class="header-site">Opositar en Valencia · GVA · Parte Específica</div>
+      <div class="header-titulo">Tema 8 — Orden 19/2013, Seguridad Digital en la Generalitat</div>
+      <div class="header-sub">Capítulo III (Medios tecnológicos) y Anexo (Glosario de términos) · Subalterno APT-APF</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <div class="header-meta-inner">
+      <span>📋 50 preguntas</span>
+      <span>🎯 Nivel medio-alto</span>
+      <span>🔀 Orden aleatorio en cada intento</span>
+      <span>✅ Explicación en cada respuesta</span>
+    </div>
+  </div>
+</header>
+
+<div class="barra-wrap">
+  <div class="barra-inner">
+    <div class="barra-track"><div class="barra-fill" id="barraFill"></div></div>
+    <span class="barra-num" id="barraNum">0 / 50</span>
+    <span class="barra-score"><span class="ok" id="scoreOk">✓ 0</span> &nbsp;<span class="ko" id="scoreKo">✗ 0</span></span>
+  </div>
+</div>
+
+<main id="mainContent"></main>
+
+<script>
+const BANCO = [
+  {
+    p: "Según el artículo 16.1 de la Orden 19/2013, ¿está permitido al usuario alterar la configuración hardware de su equipo de sobremesa o conectar otros dispositivos por iniciativa propia?",
+    ops: ["Sí, siempre que se comunique posteriormente al organismo competente en tecnologías de la información", "No está permitido alterar la configuración hardware de los equipos ni conectar otros dispositivos a iniciativa del usuario, ni tampoco variar su ubicación", "Sí, pero solo para dispositivos periféricos de bajo riesgo como ratones o teclados", "No está permitido conectar dispositivos, pero sí puede modificarse la configuración hardware libremente"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 16.1 de la Orden 19/2013 establece que no está permitido alterar la configuración hardware de los equipos ni conectar otros dispositivos a estos a iniciativa del usuario, así como tampoco variar su ubicación."
+  },
+  {
+    p: "¿Puede un usuario instalar o desinstalar programas distintos a la configuración establecida en su ordenador de sobremesa, según el artículo 16.2 de la Orden 19/2013?",
+    ops: ["Sí, siempre que el software provenga de una fuente oficial verificada", "No está permitido alterar la configuración software de los equipos, ni desinstalar o instalar programas distintos a la configuración establecida por el organismo con competencias en tecnologías de la información", "Sí, únicamente durante los primeros treinta días tras la asignación del equipo", "Solo está permitido si el programa es de uso gratuito y no requiere licencia"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 16.2 de la Orden 19/2013 establece que no está permitido alterar la configuración software de los equipos, desinstalar o instalar programas distintos a la configuración establecida por el organismo con competencias en tecnologías de la información."
+  },
+  {
+    p: "¿Qué obligaciones tiene el usuario respecto a su sesión y al equipo al finalizar la jornada, según el artículo 16.3 de la Orden 19/2013?",
+    ops: ["Solo debe cerrar sesión, sin necesidad de apagar el equipo físicamente", "Es obligatorio bloquear la sesión en caso de ausencia temporal del puesto, y es obligatorio apagar el equipo al terminar la jornada laboral", "Debe dejar el equipo encendido para permitir actualizaciones automáticas nocturnas", "No existe ninguna obligación específica al respecto en la Orden 19/2013"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 16.3 de la Orden 19/2013 establece que es obligatorio bloquear la sesión del usuario en el supuesto de ausentarse temporalmente del puesto de trabajo, a fin de evitar accesos de otras personas al equipo, y que es obligatorio apagar el equipo al terminar la jornada laboral."
+  },
+  {
+    p: "¿Dónde debe efectuarse el almacenamiento de los ficheros generados en el desempeño de las competencias profesionales, según el artículo 16.4 de la Orden 19/2013?",
+    ops: ["En el disco duro local del ordenador, para evitar sobrecargar la red corporativa", "En la carpeta habilitada en la red informática, a fin de facilitar la realización de copias de seguridad o respaldo y proteger el acceso frente a personas no autorizadas", "En un dispositivo de almacenamiento externo personal del propio usuario", "En cualquier ubicación que el usuario considere conveniente, sin restricciones específicas"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 16.4 de la Orden 19/2013 establece que el almacenamiento de los ficheros generados en el desempeño de las competencias profesionales se efectuará en la carpeta habilitada en la red informática, a fin de facilitar la realización de copias de seguridad o respaldo y proteger el acceso frente a personas no autorizadas."
+  },
+  {
+    p: "¿Está permitido almacenar información privada en los recursos de almacenamiento compartidos, según el artículo 16.5 de la Orden 19/2013?",
+    ops: ["Sí, siempre que se identifique claramente como carpeta personal", "No está permitido almacenar información privada, de cualquier naturaleza, en los recursos de almacenamiento compartidos", "Sí, con un límite máximo de espacio establecido por cada Conselleria", "Solo está prohibido si la información privada contiene datos bancarios o financieros"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 16.5 de la Orden 19/2013 establece de forma tajante que no está permitido almacenar información privada, de cualquier naturaleza, en los recursos de almacenamiento compartidos de la Administración."
+  },
+  {
+    p: "¿Qué prohíbe el artículo 16.6 de la Orden 19/2013 respecto a la información contenida en el sistema informático?",
+    ops: ["Consultar cualquier información del sistema sin autorización expresa del superior jerárquico", "Copiar, extraer o transmitir información contenida en el sistema informático para uso privado o para cualquier otro distinto del servicio público al que está destinada", "Imprimir documentos que superen las cincuenta páginas sin justificación previa", "Modificar el formato de los documentos digitales sin autorización del área de informática"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 16.6 de la Orden 19/2013 establece que no está permitido copiar, extraer o transmitir información contenida en el sistema informático para uso privado o para cualquier otro distinto del servicio público al que está destinada."
+  },
+  {
+    p: "¿Qué exige el artículo 16.7 de la Orden 19/2013 respecto a los ficheros temporales?",
+    ops: ["Deben conservarse indefinidamente por motivos de trazabilidad administrativa", "Deben ser borrados una vez hayan dejado de ser necesarios para los fines que motivaron su creación, y mientras estén vigentes deberán almacenarse en la carpeta habilitada en la red informática", "Deben duplicarse automáticamente en un servidor externo de respaldo", "No existe ninguna regulación específica sobre los ficheros temporales en la Orden"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 16.7 de la Orden 19/2013 establece que los ficheros temporales deben ser borrados una vez hayan dejado de ser necesarios para los fines que motivaron su creación, y mientras estén vigentes deberán ser almacenados en la carpeta habilitada en la red informática."
+  },
+  {
+    p: "Según el artículo 17.1 de la Orden 19/2013, ¿son de aplicación a los equipos portátiles las mismas responsabilidades que a los ordenadores de sobremesa?",
+    ops: ["No, los equipos portátiles se rigen por una normativa completamente independiente", "Sí, todas las responsabilidades aplicables a los ordenadores de sobremesa son de aplicación para los equipos portátiles, sin perjuicio de responsabilidades adicionales específicas", "Solo son aplicables las relativas al bloqueo de sesión, no las demás obligaciones", "No, los portátiles quedan exentos por su carácter móvil y su uso ocasional"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 17.1 de la Orden 19/2013 establece que todas las responsabilidades aplicables a los ordenadores de sobremesa son de aplicación para los equipos portátiles, y el art. 17.2 añade responsabilidades adicionales específicas propias de la movilidad de estos dispositivos."
+  },
+  {
+    p: "¿Qué medida exige el artículo 17.2.a) de la Orden 19/2013 respecto al almacenamiento de información sensible o confidencial en equipos portátiles?",
+    ops: ["Está totalmente prohibido almacenar cualquier tipo de información en equipos portátiles", "Con carácter general no se almacenará información sensible o confidencial en estos equipos, y en caso de ser necesario, deberá ser protegida mediante herramientas de cifrado", "Debe imprimirse una copia en papel de toda la información almacenada como medida de respaldo", "Debe solicitarse autorización notarial previa para el almacenamiento de datos sensibles"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 17.2.a) de la Orden 19/2013 establece que, con carácter general, no se almacenará información sensible o confidencial en equipos portátiles, y en caso de ser necesario, dicha información deberá ser protegida mediante herramientas de cifrado."
+  },
+  {
+    p: "¿Quién es responsable de la custodia de los equipos portátiles y qué se prohíbe respecto a su ubicación, según el artículo 17.2.b) de la Orden 19/2013?",
+    ops: ["El personal de seguridad del edificio, que debe guardarlos en un armario blindado cada noche", "El equipo estará bajo la custodia del usuario que lo utilice, no debiendo dejarse desatendido o abandonado en lugares donde pueda ser sustraído con facilidad", "El departamento de tecnologías de la información, que asume toda la responsabilidad de custodia", "No existe una figura responsable específica; la custodia es una responsabilidad colectiva del organismo"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 17.2.b) de la Orden 19/2013 establece que los equipos portátiles estarán bajo la custodia del usuario que los utilice, y que no se dejará el equipo portátil desatendido o abandonado en lugares donde pueda ser sustraído con facilidad."
+  },
+  {
+    p: "Según el artículo 17.2.d) de la Orden 19/2013, ¿en qué plazo debe notificarse la pérdida o robo de un equipo portátil?",
+    ops: ["En el plazo de veinticuatro horas desde que se produce el hecho", "De inmediato, al organismo con competencias en tecnologías de la información", "En el plazo de una semana, mediante escrito formal dirigido a la Conselleria correspondiente", "No existe plazo específico establecido en la Orden 19/2013"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 17.2.d) de la Orden 19/2013 establece que la pérdida o robo de cualquier dispositivo o equipo portátil deberá notificarse de inmediato al organismo con competencias en tecnologías de la información."
+  },
+  {
+    p: "¿Qué prohíbe el artículo 17.2.e) de la Orden 19/2013 respecto a la conexión de equipos portátiles?",
+    ops: ["No deberán conectarse directamente a redes ajenas", "No podrán conectarse nunca a Internet, ni siquiera a través de la red corporativa", "No podrán conectarse a impresoras que no sean de la marca homologada por la Generalitat", "No podrán conectarse a monitores externos en el puesto de trabajo habitual"],
+    c: 0,
+    exp: "<strong>Respuesta correcta: A.</strong> El art. 17.2.e) de la Orden 19/2013 establece que los equipos portátiles no deberán conectarse directamente a redes ajenas, con el fin de proteger la seguridad del sistema informático de la Generalitat frente a amenazas externas."
+  },
+  {
+    p: "¿Qué configuración exige el artículo 17.2.f) de la Orden 19/2013 respecto a las redes inalámbricas en los equipos portátiles?",
+    ops: ["Debe estar activada la búsqueda automática de redes inalámbricas para facilitar la movilidad", "Deberá estar desactivada la búsqueda de redes inalámbricas", "Debe configurarse una contraseña específica para cada red inalámbrica detectada", "No existe ninguna previsión específica sobre redes inalámbricas en los portátiles"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 17.2.f) de la Orden 19/2013 establece que deberá estar desactivada la búsqueda de redes inalámbricas en los equipos portátiles, como medida adicional de seguridad frente a conexiones no controladas."
+  },
+  {
+    p: "¿Con qué periodicidad mínima deben los usuarios de equipos portátiles realizar conexiones a la red corporativa, según el artículo 17.3 de la Orden 19/2013?",
+    ops: ["Semanalmente, según las instrucciones del organismo competente", "Al menos mensuales, según las instrucciones proporcionadas por el organismo con competencias en tecnologías de la información", "Trimestralmente, coincidiendo con las revisiones técnicas periódicas", "No existe una periodicidad mínima establecida; se realiza a criterio del usuario"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 17.3 de la Orden 19/2013 establece que los usuarios de equipos portátiles deberán realizar conexiones periódicas al menos mensuales a la red corporativa, para permitir la actualización de aplicaciones, sistema operativo, firmas de antivirus y demás medidas de seguridad."
+  },
+  {
+    p: "¿En función de qué criterio se adoptan las medidas técnicas de seguridad sobre los ordenadores portátiles, según el artículo 17.4 de la Orden 19/2013?",
+    ops: ["En función del coste de adquisición del equipo", "Al nivel de seguridad establecido atendiendo al tratamiento de la información que vaya a efectuarse", "En función exclusiva de la antigüedad del equipo desde su compra", "Según el criterio personal del usuario responsable del equipo"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 17.4 de la Orden 19/2013 establece que sobre los ordenadores portátiles se adoptarán las medidas técnicas adecuadas al nivel de seguridad establecido, atendiendo al tratamiento de la información que vaya a efectuarse con el equipo."
+  },
+  {
+    p: "¿Qué es obligatorio en los dispositivos multifunción compartidos que lo permitan, según el artículo 18.1 de la Orden 19/2013?",
+    ops: ["El uso de buzones de impresión con clave de acceso", "La instalación de una cámara de vigilancia junto al dispositivo", "El registro manual de cada impresión en un libro de incidencias", "La contratación de un mantenimiento técnico semanal específico"],
+    c: 0,
+    exp: "<strong>Respuesta correcta: A.</strong> El art. 18.1 de la Orden 19/2013 establece que es obligatorio el uso de buzones de impresión con clave de acceso, en los dispositivos multifunción compartidos que lo permitan, para evitar que documentos confidenciales queden accesibles a terceros."
+  },
+  {
+    p: "¿Qué obligación establece el artículo 18.2 de la Orden 19/2013 sobre la documentación impresa?",
+    ops: ["Debe imprimirse siempre en doble cara para reducir el consumo de papel", "Debe permanecer el menor tiempo posible en las bandejas de salida de las impresoras, para evitar que terceras personas puedan acceder a la misma", "Debe archivarse digitalmente antes de proceder a su impresión física", "Debe firmarse manualmente por el responsable del departamento antes de imprimirse"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 18.2 de la Orden 19/2013 establece que cuando se imprima documentación, ésta deberá permanecer el menor tiempo posible en las bandejas de salida de las impresoras, para evitar que terceras personas puedan acceder a la misma."
+  },
+  {
+    p: "¿Qué establece el artículo 18.3 de la Orden 19/2013 respecto a los originales utilizados en la fotocopiadora, impresora, escáner o equipos multifunción?",
+    ops: ["Deben destruirse inmediatamente tras el proceso de copia o digitalización", "Se deberán recoger una vez finalizado el proceso de copia o digitalización", "Deben conservarse por el departamento de tecnologías de la información durante un año", "No existe ninguna previsión específica sobre este aspecto en la Orden 19/2013"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 18.3 de la Orden 19/2013 establece que se deberán recoger los originales de la fotocopiadora, impresora, escáner o equipos multifunción una vez finalizado el proceso de copia o digitalización, para evitar el olvido y la exposición de documentos sensibles."
+  },
+  {
+    p: "¿Qué responsabilidades específicas de los equipos portátiles se aplican también a los dispositivos móviles, según el artículo 19.1 de la Orden 19/2013?",
+    ops: ["Ninguna, ya que los dispositivos móviles se rigen por normativa exclusiva y separada", "Todas las responsabilidades de uso específicas de los equipos portátiles también lo son para los dispositivos móviles", "Únicamente las relativas al cifrado de la información sensible", "Solo la obligación de notificación en caso de pérdida o robo"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 19.1 de la Orden 19/2013 establece que todas las responsabilidades de uso específicas de los equipos portátiles (art. 17.2) también son aplicables a los dispositivos móviles, extendiendo así el régimen de protección específico."
+  },
+  {
+    p: "¿Qué configuración adicional exige el artículo 19.2 de la Orden 19/2013 específicamente para los dispositivos móviles?",
+    ops: ["La instalación de una aplicación de geolocalización permanente activada", "Configurar el dispositivo para que, pasado un tiempo de inactividad, pase automáticamente a modo de suspensión y se active el bloqueo de la pantalla", "La desinstalación completa de cualquier aplicación de mensajería instantánea", "La sincronización automática con la nube personal del usuario, no la corporativa"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 19.2 de la Orden 19/2013 establece que es obligatorio configurar el dispositivo móvil para que, pasado un tiempo de inactividad, pase automáticamente a modo de suspensión y se active el bloqueo de la pantalla."
+  },
+  {
+    p: "¿Quién proporciona los dispositivos de almacenamiento removibles autorizados, según el artículo 20.1 de la Orden 19/2013?",
+    ops: ["Cualquier proveedor externo homologado por el usuario, siempre que cumpla estándares ISO", "La Administración de la Generalitat, siendo conformes a las normas de seguridad de la organización y destinados a uso exclusivamente profesional como herramienta de transporte de ficheros, no de almacenamiento", "El propio usuario, que puede utilizar sus dispositivos personales previa autorización verbal", "Los sindicatos representados en la Mesa Sectorial de Función Pública"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 20.1 de la Orden 19/2013 establece que los dispositivos de almacenamiento removibles autorizados serán los proporcionados por la Administración de la Generalitat, conformes a las normas de seguridad de la organización, destinados a un uso exclusivamente profesional como herramienta de transporte de ficheros, y no como herramienta de almacenamiento."
+  },
+  {
+    p: "¿Qué medida de protección exige el artículo 20.2 de la Orden 19/2013 si es necesario almacenar información sensible o confidencial en un dispositivo de almacenamiento removible?",
+    ops: ["Debe protegerse mediante herramientas de cifrado", "Debe solicitarse una autorización escrita firmada por el Conseller correspondiente", "Debe realizarse exclusivamente en presencia de dos testigos funcionarios", "Debe registrarse el número de serie del dispositivo en un libro específico"],
+    c: 0,
+    exp: "<strong>Respuesta correcta: A.</strong> El art. 20.2 de la Orden 19/2013 establece que, en caso de ser necesario almacenar información sensible o confidencial en un dispositivo de almacenamiento removible, ésta deberá ser protegida mediante herramientas de cifrado, del mismo modo que se exige para los equipos portátiles."
+  },
+  {
+    p: "¿Es aplicable a los dispositivos de almacenamiento removibles la misma exigencia de custodia y no abandono que a los equipos portátiles, según el artículo 20.3 de la Orden 19/2013?",
+    ops: ["No, los dispositivos removibles pueden dejarse en cualquier lugar del centro de trabajo sin restricción", "Sí, estarán bajo la custodia del usuario que los utilice, no dejándose desatendidos o abandonados en lugares donde puedan ser sustraídos con facilidad", "Solo se exige custodia si el dispositivo tiene una capacidad superior a 16 GB", "La custodia corresponde exclusivamente al personal de conserjería del edificio"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 20.3 de la Orden 19/2013 establece que este tipo de dispositivos estará bajo la custodia del usuario que los utilice, no debiendo dejarse desatendido o abandonado en lugares donde pueda ser sustraído con facilidad, replicando la regla del art. 17.2.b) para portátiles."
+  },
+  {
+    p: "¿Cuál es el plazo de notificación de la pérdida o robo de un dispositivo de almacenamiento removible, según el artículo 20.4 de la Orden 19/2013?",
+    ops: ["Debe notificarse en el plazo de setenta y dos horas desde que se produce el hecho", "Debe notificarse de inmediato al organismo con competencias en tecnologías de la información", "Debe notificarse en el plazo de un mes, coincidiendo con el informe mensual de incidencias", "No existe obligación de notificación para este tipo de dispositivos, a diferencia de los portátiles"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 20.4 de la Orden 19/2013 establece que la pérdida o robo de cualquier dispositivo de almacenamiento removible deberá notificarse de inmediato al organismo con competencias en tecnologías de la información, con la misma inmediatez exigida para los equipos portátiles."
+  },
+  {
+    p: "¿Para qué finalidad tienen como objetivo las cuentas de correo electrónico creadas en los servidores de la Administración de la Generalitat, según el artículo 21.1 de la Orden 19/2013?",
+    ops: ["El intercambio de mensajes propios del desempeño profesional, quedando prohibido su uso con fines comerciales, financieros o personales", "Cualquier finalidad que el usuario considere oportuna, sin restricciones específicas", "Exclusivamente la recepción de comunicaciones oficiales, sin posibilidad de envío", "El intercambio de mensajes tanto profesionales como personales, siempre que sean moderados"],
+    c: 0,
+    exp: "<strong>Respuesta correcta: A.</strong> El art. 21.1 de la Orden 19/2013 establece que las cuentas creadas en los servidores de la Administración de la Generalitat tienen como objetivo el intercambio de mensajes propios del desempeño profesional, quedando prohibido su uso con fines comerciales, financieros o personales."
+  },
+  {
+    p: "¿Qué ocurre con los mensajes de correo electrónico corporativo cuyo número de destinatarios supera el límite establecido, según el artículo 21.2 de la Orden 19/2013?",
+    ops: ["Se envían igualmente, pero con una advertencia previa al remitente", "No están permitidos los envíos masivos, siendo rechazados los mensajes si el número máximo de destinatarios es superior al límite establecido por el órgano con competencias en tecnologías de la información", "Se envían con un retraso automático de veinticuatro horas para su revisión", "Se remiten automáticamente al buzón de spam del destinatario"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 21.2 de la Orden 19/2013 establece que no están permitidos los envíos masivos, siendo rechazados los mensajes si el número máximo de destinatarios es superior al límite establecido por el órgano con competencias en materia de tecnologías de la información."
+  },
+  {
+    p: "¿Qué prohíbe expresamente el artículo 21.4 de la Orden 19/2013 en relación con el correo electrónico?",
+    ops: ["El envío de archivos adjuntos superiores a 10 MB", "Suplantar la identidad de una persona a través del correo electrónico", "El uso de firmas corporativas personalizadas con imagen propia", "El envío de correos fuera del horario laboral establecido"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 21.4 de la Orden 19/2013 establece que queda totalmente prohibido suplantar la identidad de una persona a través del correo electrónico, una conducta que puede además tener consecuencias disciplinarias y, en su caso, penales."
+  },
+  {
+    p: "Según el artículo 21.5 de la Orden 19/2013, ¿está permitido usar cuentas de correo distintas a las proporcionadas por la Administración dentro de la RCGVA?",
+    ops: ["Sí, sin ninguna restricción, siempre que el usuario lo considere más cómodo", "No se permite el uso de cuentas de correo distintas a las proporcionadas por la Administración de la Generalitat dentro de la RCGVA, salvo autorización expresa del órgano con competencias en tecnologías de la información", "Sí, pero únicamente para el envío de mensajes internos entre compañeros de la misma Conselleria", "No se permite en ningún caso, sin posibilidad de excepción ni autorización"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 21.5 de la Orden 19/2013 establece que no se permite el uso de cuentas de correo distintas a las proporcionadas por la Administración de la Generalitat dentro de la RCGVA, salvo autorización expresa del órgano con competencias en materia de tecnologías de la información."
+  },
+  {
+    p: "¿En qué circunstancias puede enviarse información sensible en el cuerpo del mensaje o en archivos adjuntos por correo electrónico, según el artículo 21.6 de la Orden 19/2013?",
+    ops: ["En ningún caso, ya que está absolutamente prohibido enviar información sensible por correo electrónico", "Únicamente si se adoptan los mecanismos necesarios para evitar que la información sea inteligible o manipulada por terceros, como el cifrado y la firma electrónica", "Solo si el destinatario es un cargo directivo de nivel superior al remitente", "Sin ninguna restricción particular, siempre que el correo se envíe dentro de la RCGVA"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 21.6 de la Orden 19/2013 establece que los usuarios no deben enviar mensajes con información sensible tanto en el cuerpo como en los archivos adjuntos, y que este envío únicamente podrá realizarse si se adoptan mecanismos como el cifrado y la firma electrónica para evitar que la información sea inteligible o manipulada por terceros."
+  },
+  {
+    p: "¿Qué recomendación establece el artículo 21.7 de la Orden 19/2013 respecto a los mensajes recibidos de remitentes desconocidos?",
+    ops: ["Se recomienda reenviarlos inmediatamente al servicio de informática para su análisis", "Se recomienda no abrir mensajes recibidos de remitentes desconocidos, dado que el correo electrónico es una de las fuentes más importantes de difusión de virus", "Se recomienda contestar solicitando la identificación del remitente antes de abrir el mensaje", "Se recomienda archivarlos en una carpeta específica sin eliminarlos, por si resultan relevantes"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 21.7 de la Orden 19/2013 establece que el correo electrónico es una de las fuentes más importantes de difusión de virus, por lo que se recomienda no abrir mensajes recibidos de remitentes desconocidos."
+  },
+  {
+    p: "¿Cómo se garantiza la identidad del remitente en el correo electrónico corporativo, según el artículo 21.8 de la Orden 19/2013?",
+    ops: ["Mediante la comprobación telefónica previa con el destinatario", "Los correos se firmarán digitalmente", "Mediante la inclusión del número de DNI del remitente en el asunto del mensaje", "A través de un código de verificación enviado por SMS al destinatario"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 21.8 de la Orden 19/2013 establece que, para garantizar la identidad del remitente, los correos se firmarán digitalmente, complementando así las medidas de cifrado previstas para la información sensible."
+  },
+  {
+    p: "¿Qué medida automática de seguridad establece el artículo 21.9 de la Orden 19/2013 debido a la continua aparición de nuevos virus?",
+    ops: ["Se cuarentenan durante siete días todos los mensajes con archivos adjuntos", "Son eliminados automáticamente los mensajes con anexos susceptibles de ejecución", "Se envía una copia de seguridad de cada mensaje recibido a un servidor externo", "Se solicita confirmación manual del usuario antes de abrir cualquier archivo adjunto"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 21.9 de la Orden 19/2013 establece que, debido al incremento y a la continua aparición de nuevos virus, son eliminados automáticamente los mensajes con anexos susceptibles de ejecución, evitando así la propagación de malware a través del correo corporativo."
+  },
+  {
+    p: "¿Qué limitaciones técnicas se establecen respecto al tamaño de los correos y del buzón, según el artículo 21.10 de la Orden 19/2013?",
+    ops: ["No existe ninguna limitación de tamaño, dado que el sistema tiene capacidad ilimitada", "Se limitará el tamaño máximo de los ficheros adjuntos y se asignará a los usuarios un tamaño máximo de buzón, dentro de unos límites razonables", "El tamaño se limita únicamente para archivos de imagen o vídeo, no para documentos de texto", "El límite de tamaño depende exclusivamente del criterio de cada Conselleria, sin regulación común"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 21.10 de la Orden 19/2013 establece que se limitará el tamaño máximo de los ficheros adjuntos y se asignará a los usuarios un tamaño máximo de buzón, dentro de unos límites razonables, para garantizar el correcto funcionamiento del sistema de correo corporativo."
+  },
+  {
+    p: "¿A través de qué vía debe realizarse el acceso a internet desde la RCGVA, según el artículo 22.1.a) de la Orden 19/2013?",
+    ops: ["A través de cualquier proveedor de internet contratado individualmente por cada empleado", "Únicamente a través de la salida a internet establecida por el órgano con competencias en tecnologías de la información, utilizando los medios tecnológicos dispuestos a tal fin", "A través de la red móvil personal del usuario conectada por USB", "Indistintamente por cualquier vía, siempre que se garantice la conexión estable"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 22.1.a) de la Orden 19/2013 establece que el acceso a internet se realizará únicamente a través de la salida a internet establecida por el órgano con competencias en materia de tecnologías de la información, utilizando los medios tecnológicos que se dispongan a tal fin."
+  },
+  {
+    p: "Según el artículo 22.1.b) de la Orden 19/2013, ¿está permitido el acceso a internet por otros medios distintos de la salida oficial establecida?",
+    ops: ["Sí, siempre que se solicite autorización previa por escrito", "El acceso a internet por otros medios está expresamente prohibido", "Sí, únicamente en situaciones de emergencia debidamente justificadas", "Solo está permitido para el personal directivo de la Generalitat"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 22.1.b) de la Orden 19/2013 establece de forma expresa que el acceso a internet por otros medios distintos de la salida oficial está expresamente prohibido, reforzando el control centralizado del tráfico de red."
+  },
+  {
+    p: "¿Cómo se filtran los recursos de internet accesibles y quién determina el tipo de contenidos y horarios de acceso, según el artículo 22.1.c) de la Orden 19/2013?",
+    ops: ["Se filtran manualmente por cada usuario según sus propias preferencias personales", "Los recursos serán filtrados según su contenido a través de sistemas automatizados, y cada usuario tendrá asignado un perfil de acceso en función de su puesto de trabajo, que determinará a qué contenidos podrá acceder y en qué horarios", "No existe ningún sistema de filtrado; el acceso es libre para todos los empleados públicos", "El filtrado se realiza únicamente durante el horario nocturno, permaneciendo libre durante el día"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 22.1.c) de la Orden 19/2013 establece que los recursos de internet serán filtrados según su contenido a través de sistemas automatizados, y que cada usuario tendrá asignado un perfil de acceso en función de su puesto de trabajo, que determinará a qué tipo de contenidos podrá acceder y en qué horarios."
+  },
+  {
+    p: "¿Quién crea los perfiles de acceso a internet de los usuarios, según el artículo 22.1.d) de la Orden 19/2013?",
+    ops: ["Cada Conselleria de forma independiente, según sus propios criterios internos", "Los perfiles de acceso serán creados por el órgano con competencias en materia de tecnologías de la información", "El superior jerárquico directo de cada usuario, mediante solicitud individual", "El propio usuario, mediante autoconfiguración en el momento de su alta en el sistema"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 22.1.d) de la Orden 19/2013 establece que los perfiles de acceso serán creados por el órgano con competencias en materia de tecnologías de la información, centralizando así la gestión de accesos según el puesto de trabajo."
+  },
+  {
+    p: "¿A qué debe limitarse la utilización de internet por parte del usuario, según el artículo 22.2.a) de la Orden 19/2013?",
+    ops: ["A un máximo de dos horas diarias, con independencia de la finalidad", "A la obtención de información relacionada con el trabajo que se desempeña, evitando toda utilización que no tenga relación con las funciones encomendadas o que no conduzca a una mejora en la calidad del trabajo", "A las páginas web previamente autorizadas por escrito por el superior jerárquico", "A la consulta exclusiva de portales oficiales del Gobierno de España y de la Unión Europea"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 22.2.a) de la Orden 19/2013 establece que la utilización de internet debe limitarse a la obtención de información relacionada con el trabajo que se desempeña, debiendo evitarse toda utilización que no tenga una mínima relación con las funciones encomendadas al usuario, o que pudiera conducir a una mejora en la calidad del trabajo desarrollado."
+  },
+  {
+    p: "¿Qué tipo de páginas web están expresamente prohibidas, según el artículo 22.2.b) de la Orden 19/2013?",
+    ops: ["Únicamente las páginas de descarga de software no autorizado", "Las páginas de contenido ofensivo, inapropiado, pornográfico o discriminatorio por razones de género, etnia, opción sexual, discapacidad o cualquier otra circunstancia personal o social", "Solo las páginas de contenido político o de partidos políticos", "Únicamente las páginas de redes sociales de uso generalista"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 22.2.b) de la Orden 19/2013 establece que no está permitido el acceso a páginas de contenido ofensivo, inapropiado, pornográfico, o discriminatorio por razones de género, etnia, opción sexual, discapacidad o cualquier otra circunstancia personal o social."
+  },
+  {
+    p: "¿Qué tipo de descargas de internet no están permitidas, según el artículo 22.2.c) de la Orden 19/2013?",
+    ops: ["Cualquier descarga, sin excepción alguna, ni siquiera de páginas oficiales", "La descarga de cualquier clase de programas, aplicaciones, documentos o archivos que no provengan de páginas oficiales relacionadas con el trabajo, con la finalidad de que la descarga no pueda poner en peligro los sistemas informáticos y la información que custodia la Generalitat", "Únicamente las descargas de archivos de audio o vídeo, quedando permitidas las de texto", "Las descargas que superen los 100 MB de tamaño, sin importar su procedencia"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 22.2.c) de la Orden 19/2013 establece que no se permite la descarga desde internet de cualquier clase de programas, aplicaciones, documentos o archivos que no provengan de páginas oficiales relacionadas con el trabajo, con la finalidad de que la descarga no pueda poner en peligro los sistemas informáticos y la información que la Generalitat custodia."
+  },
+  // ── GLOSARIO ──
+  {
+    p: "Según el glosario de la Orden 19/2013, ¿cómo se define el término 'amenaza'?",
+    ops: ["Un ataque informático que ya se ha materializado sobre un sistema", "Eventos que pueden desencadenar un incidente en la organización, produciendo daños materiales o pérdidas inmateriales en sus activos", "Un dispositivo de seguridad instalado para prevenir el acceso no autorizado", "Un programa informático diseñado con fines maliciosos"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El Anexo (Glosario) de la Orden 19/2013 define 'amenaza' como los eventos que pueden desencadenar un incidente en la organización, produciendo daños materiales o pérdidas inmateriales en sus activos."
+  },
+  {
+    p: "Según el glosario de la Orden 19/2013, ¿qué es una 'contraseña o clave de acceso'?",
+    ops: ["Un dispositivo físico que se conecta al ordenador para autenticar al usuario", "Información secreta, en general compuesta por un grupo de caracteres, utilizada para la autenticación", "Un certificado electrónico emitido por una autoridad de certificación reconocida", "Un código numérico enviado por SMS al teléfono móvil del usuario"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define la 'contraseña o clave de acceso' como información secreta, en general compuesta por un grupo de caracteres, utilizada para la autenticación del usuario en el sistema."
+  },
+  {
+    p: "¿Cuál es la finalidad de una 'copia de seguridad o respaldo', según el glosario de la Orden 19/2013?",
+    ops: ["Servir de base de datos alternativa para consultas en horario nocturno", "Es una copia de los datos originales que se realiza con el fin de disponer de un medio de recuperarlos en caso de su pérdida", "Reducir el espacio de almacenamiento ocupado por los archivos originales", "Facilitar el acceso remoto a los datos desde cualquier dispositivo externo"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define la copia de seguridad o respaldo como una copia de los datos originales que se realiza con el fin de disponer de un medio de recuperarlos en caso de su pérdida."
+  },
+  {
+    p: "¿Cómo define el glosario de la Orden 19/2013 el término 'dispositivo móvil'?",
+    ops: ["Un equipo con procesador de alta potencia diseñado exclusivamente para el trabajo de oficina", "Un equipo de tamaño pequeño, con algunas capacidades de procesamiento, con conexión permanente o intermitente a una red, con memoria limitada, diseñado específicamente para una función, pero que puede llevar a cabo otras funciones más generales", "Un equipo exclusivamente destinado a la telefonía y sin capacidad de conexión a redes de datos", "Un equipo que únicamente puede utilizarse conectado permanentemente a la red eléctrica"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define 'dispositivo móvil' como un equipo de tamaño pequeño, con algunas capacidades de procesamiento, con conexión permanente o intermitente a una red, con memoria limitada, diseñado específicamente para una función, pero que puede llevar a cabo otras funciones más generales."
+  },
+  {
+    p: "¿Qué es el 'cifrado', según el glosario de la Orden 19/2013?",
+    ops: ["Un proceso de compresión de archivos para reducir su tamaño de almacenamiento", "Transformación criptográfica de datos para producir un criptograma o texto cifrado", "Un mecanismo de identificación mediante huella dactilar del usuario", "Un procedimiento de eliminación segura y permanente de archivos digitales"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define 'cifrado' como la transformación criptográfica de datos para producir un criptograma o texto cifrado, protegiendo así la información frente a accesos no autorizados."
+  },
+  {
+    p: "¿Cómo describe el glosario de la Orden 19/2013 el 'equipo portátil'?",
+    ops: ["Un dispositivo que solo puede realizar funciones básicas de comunicación telefónica", "Aquel ordenador personal que es capaz de realizar la mayor parte de las tareas que realizan los ordenadores de sobremesa, con similar capacidad, con la ventaja de su peso y tamaño reducidos, así como su movilidad", "Un dispositivo exclusivamente destinado al almacenamiento de datos sin capacidad de procesamiento", "Un equipo que requiere conexión permanente a la red eléctrica para su funcionamiento"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define 'equipo portátil' como aquel ordenador personal capaz de realizar la mayor parte de las tareas que realizan los ordenadores de sobremesa, con similar capacidad, con la ventaja de su peso y tamaño reducidos, así como su movilidad."
+  },
+  {
+    p: "¿Qué es la 'identificación de acceso', según el glosario de la Orden 19/2013?",
+    ops: ["Un documento acreditativo físico que porta el usuario visiblemente en su puesto de trabajo", "Proceso que limita y controla el acceso a los recursos de un sistema de información", "Un registro histórico de todos los accesos realizados por un usuario al sistema", "Un formulario que debe rellenarse anualmente para renovar los permisos de acceso"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define la 'identificación de acceso' como el proceso que limita y controla el acceso a los recursos de un sistema de información."
+  },
+  {
+    p: "¿Cómo se define la 'información sensible' en el glosario de la Orden 19/2013?",
+    ops: ["Aquella información que supera un determinado tamaño de archivo establecido por la normativa", "Aquella información, así definida por su propietario, que debe ser especialmente protegida, pues su revelación, alteración, pérdida o destrucción puede producir daños importantes a alguien o a algo", "Toda la información almacenada en dispositivos móviles, sin distinción de su contenido", "Únicamente la información que contiene datos bancarios o financieros de terceros"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define la 'información sensible' como aquella, así definida por su propietario, que debe ser especialmente protegida, pues su revelación, alteración, pérdida o destrucción puede producir daños importantes a alguien o a algo."
+  },
+  {
+    p: "¿A qué se refiere el término 'hardware', según el glosario de la Orden 19/2013?",
+    ops: ["Exclusivamente a los programas informáticos instalados en un ordenador", "A todas las partes tangibles de un sistema informático, cuyos componentes son eléctricos, electrónicos, electromecánicos y mecánicos", "A los datos y ficheros almacenados en la memoria del sistema", "Al conjunto de protocolos de comunicación utilizados en una red informática"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define 'hardware' como todas las partes tangibles de un sistema informático, cuyos componentes son: eléctricos, electrónicos, electromecánicos y mecánicos."
+  },
+  {
+    p: "¿Cómo se definen los 'ordenadores personales' según el glosario de la Orden 19/2013?",
+    ops: ["Dispositivos de uso exclusivamente privado no vinculados a ningún puesto de trabajo", "Los equipos informáticos básicos de los puestos de trabajo, donde estarán instaladas las aplicaciones necesarias para el desempeño de las funciones y desde los que accederá el usuario a la red corporativa y a los sistemas de información", "Equipos destinados únicamente al almacenamiento temporal de correos electrónicos", "Servidores centrales que gestionan las bases de datos de toda la Generalitat"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define los 'ordenadores personales' como los equipos informáticos básicos de los puestos de trabajo, donde estarán instaladas las aplicaciones necesarias para el desempeño de las funciones y desde los que accederá el usuario a la red corporativa y a los sistemas de información."
+  },
+  {
+    p: "¿Qué es un 'perfil de acceso', según el glosario de la Orden 19/2013?",
+    ops: ["Un currículum profesional del usuario que solicita acceso al sistema", "La limitación del acceso a los recursos exclusivamente a personas, entidades o procesos con la debida autorización", "Un formulario de solicitud de alta en el sistema informático corporativo", "Una fotografía y datos biométricos del usuario almacenados en el sistema"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define el 'perfil de acceso' como la limitación del acceso a los recursos exclusivamente a personas, entidades o procesos con la debida autorización."
+  },
+  {
+    p: "¿Cómo describe el glosario de la Orden 19/2013 la 'telefonía fija'?",
+    ops: ["Cualquier sistema de comunicación telefónica, incluida la telefonía móvil de última generación", "Aquella que hace referencia a las líneas y equipos que se encargan de la comunicación entre terminales telefónicos no portables, y generalmente enlazados entre ellos o con la central por medio de conductores metálicos", "Un sistema de videoconferencia utilizado exclusivamente en reuniones institucionales", "Un servicio de mensajería instantánea corporativa entre empleados públicos"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define la 'telefonía fija' como aquella que hace referencia a las líneas y equipos que se encargan de la comunicación entre terminales telefónicos no portables, generalmente enlazados entre ellos o con la central por medio de conductores metálicos."
+  },
+  {
+    p: "¿Qué es la RCGVA, según el glosario de la Orden 19/2013?",
+    ops: ['La "Red de Comunicaciones del Gobierno Valenciano de Alicante", limitada a esa provincia', 'La infraestructura común para la interconexión de las sedes de todas las consellerías y organismos, tanto a nivel de servicios de datos como de voz, con distribución geográfica que abarca toda la Comunitat Valenciana', "Un registro centralizado de contratos administrativos gestionado por la Generalitat", "Un portal de acceso exclusivo para la ciudadanía, sin uso interno por parte de la Administración"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define la Red Corporativa de la Generalitat Valenciana (RCGVA) como la infraestructura común para la interconexión de las sedes de todas las consellerías y organismos, tanto a nivel de los servicios de datos como de voz, con distribución geográfica que abarca toda la Comunitat Valenciana."
+  },
+  {
+    p: "¿Cómo se define la 'red informática', según el glosario de la Orden 19/2013?",
+    ops: ["Un conjunto de normas jurídicas que regulan el uso de internet en la Administración", "Sistema de comunicación que conecta ordenadores y otros equipos informáticos entre sí, con la finalidad de compartir información y recursos", "Un programa antivirus instalado en todos los equipos de la Generalitat", "Un servicio de asistencia técnica telefónica para incidencias informáticas"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define la 'red informática' como el sistema de comunicación que conecta ordenadores y otros equipos informáticos entre sí, con la finalidad de compartir información y recursos."
+  },
+  {
+    p: "¿Qué ejemplos de 'red inalámbrica' cita el glosario de la Orden 19/2013?",
+    ops: ["Fibra óptica, cable coaxial y par trenzado", "WIFI, Bluetooth, o infrarrojos", "Ethernet, RJ45 y USB", "5G, 4G y ADSL"],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El glosario de la Orden 19/2013 define la 'red inalámbrica' como la conexión de equipos por medio de ondas electromagnéticas y sin necesidad de una conexión física mediante cables, citando como redes más usuales el WIFI, Bluetooth o infrarrojos."
+  }
+];
+
+// ── ALEATORIZACIÓN ──
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function prepararPreguntas() {
+  const mezcladas = shuffle(BANCO);
+  return mezcladas.map(q => {
+    const textoCorrecta = q.ops[q.c];
+    const opsNuevas = shuffle(q.ops);
+    const nuevoC = opsNuevas.indexOf(textoCorrecta);
+    return { p: q.p, ops: opsNuevas, c: nuevoC, exp: q.exp };
+  });
+}
+
+let preguntas = [];
+let respondidas = 0, correctas = 0, incorrectas = 0;
+
+function actualizarBarra() {
+  const pct = preguntas.length ? (respondidas / preguntas.length) * 100 : 0;
+  document.getElementById('barraFill').style.width = pct + '%';
+  document.getElementById('barraNum').textContent = respondidas + ' / ' + preguntas.length;
+  document.getElementById('scoreOk').textContent = '✓ ' + correctas;
+  document.getElementById('scoreKo').textContent = '✗ ' + incorrectas;
+}
+
+function responder(qi, oi) {
+  const q = preguntas[qi];
+  const btns = document.querySelectorAll('[data-qi="' + qi + '"]');
+  btns.forEach(b => b.disabled = true);
+  btns.forEach((b, j) => {
+    if (j === q.c) b.classList.add('correcta');
+    else if (j === oi && oi !== q.c) b.classList.add('incorrecta');
+  });
+  document.getElementById('exp-' + qi).classList.add('visible');
+  respondidas++;
+  if (oi === q.c) correctas++; else incorrectas++;
+  actualizarBarra();
+  if (respondidas === preguntas.length) setTimeout(mostrarResultado, 700);
+}
+
+function mostrarResultado() {
+  const pct = Math.round((correctas / preguntas.length) * 100);
+  document.getElementById('resPunt').innerHTML = correctas + ' <span>/ ' + preguntas.length + '</span>';
+  document.getElementById('resCorr').textContent = correctas;
+  document.getElementById('resIncorr').textContent = incorrectas;
+  document.getElementById('resPct').textContent = pct + '%';
+
+  let txt, col, bg;
+  if (pct >= 90)      { txt = '🏆 Sobresaliente'; col = '#166534'; bg = '#f0fdf4'; }
+  else if (pct >= 75) { txt = '✅ Notable';        col = '#1e3a5f'; bg = '#eff6ff'; }
+  else if (pct >= 60) { txt = '📘 Aprobado';       col = '#92400e'; bg = '#fffbeb'; }
+  else                { txt = '❌ Insuficiente — ¡Sigue practicando!'; col = '#991b1b'; bg = '#fef2f2'; }
+
+  document.getElementById('resCalif').innerHTML =
+    '<span class="calif-badge" style="background:' + bg + ';color:' + col + '">' + txt + '</span>';
+
+  const el = document.getElementById('resultado');
+  el.classList.add('visible');
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function render() {
+  respondidas = 0; correctas = 0; incorrectas = 0;
+  preguntas = prepararPreguntas();
+  actualizarBarra();
+
+  const main = document.getElementById('mainContent');
+  main.innerHTML = '';
+  const letras = ['A','B','C','D'];
+
+  preguntas.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const opsHTML = q.ops.map((op, j) =>
+      `<button class="opcion" data-qi="${i}" onclick="responder(${i},${j})">
+        <span class="letra">${letras[j]})</span><span>${op}</span>
+      </button>`
+    ).join('');
+    card.innerHTML =
+      `<div class="card-num">Pregunta ${i + 1} de ${preguntas.length}</div>
+       <div class="card-pregunta">${q.p}</div>
+       <div class="opciones">${opsHTML}</div>
+       <div class="explicacion" id="exp-${i}">${q.exp}</div>`;
+    main.appendChild(card);
+  });
+
+  const sep = document.createElement('div');
+  sep.className = 'divider';
+  sep.textContent = 'Fin del test';
+  main.appendChild(sep);
+
+  const res = document.createElement('div');
+  res.className = 'resultado';
+  res.id = 'resultado';
+  res.innerHTML =
+    `<div class="resultado-eyebrow">Resultado final</div>
+     <h2>Test completado</h2>
+     <div class="resultado-nota" id="resPunt">0 <span>/ 50</span></div>
+     <div id="resCalif"></div>
+     <div class="stats">
+       <div class="stat"><div class="stat-num" id="resCorr" style="color:#166534">0</div><div class="stat-lab">Correctas</div></div>
+       <div class="stat"><div class="stat-num" id="resIncorr" style="color:#991b1b">0</div><div class="stat-lab">Incorrectas</div></div>
+       <div class="stat"><div class="stat-num" id="resPct">0%</div><div class="stat-lab">% aciertos</div></div>
+     </div>
+     <p class="resultado-hint">Desplázate hacia arriba para revisar las explicaciones de cada pregunta.</p>
+     <button class="btn btn-naranja" onclick="render(); window.scrollTo({top:0,behavior:'smooth'})">↺ Repetir con nuevo orden</button>`;
+  main.appendChild(res);
+}
+
+render();
+</script>
+</body>
+</html>
